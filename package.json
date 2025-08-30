@@ -1,6 +1,6 @@
 {
-"name": "rest-node-ts",
-"version": "1.0.0",
+  "name": "rest-node-ts",
+  "version": "1.0.0",
   "main": "index.js",
   "description": "A Node.js TypeScript template for REST API projects",
   "author": "Artyom <artyom.u@outlook.com> Ulanchik",
@@ -9,7 +9,12 @@
     "dev": "ts-node-dev --respawn -r tsconfig-paths/register src/server.ts",
     "build": "tsc"
   },
-  "keywords": ["nodejs", "typescript", "express", "rest-api"],
+  "keywords": [
+    "nodejs",
+    "typescript",
+    "express",
+    "rest-api"
+  ],
   "license": "MIT",
   "packageManager": "pnpm@10.10.0",
   "devDependencies": {
@@ -24,6 +29,7 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/morgan": "^1.9.10",
+    "axios": "^1.11.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
