@@ -5,7 +5,7 @@ import helmet from 'helmet';
 
 import routes from '@/routes/openalex';
 import { errorHandler } from '@/middleware/errorHandler';
-import { config } from '@/config/env';
+import { env } from '@/config/env';
 
 const app = express();
 
@@ -14,7 +14,7 @@ app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-if (config.enableMorgan) {
+if (env.enableMorgan) {
     app.use(morgan('dev'));
 }
 

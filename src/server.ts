@@ -1,9 +1,9 @@
 import app from '@/app';
-import { config } from '@/config/env';
+import { env } from '@/config/env';
 import { Logger } from '@/utils/logger';
 
-const server = app.listen(config.port, () => {
-    Logger.success(`Server is up at port ${config.port}`)
+const server = app.listen(env.port, () => {
+    Logger.success(`Server is up at port ${env.port}`)
 })
 
 const shutdown = (signal: string) => {

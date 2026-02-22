@@ -1,4 +1,4 @@
-import { config } from '@/config/env';
+import { env } from '@/config/env';
 
 export class Logger {
     private static colors = {
@@ -11,7 +11,7 @@ export class Logger {
 
     private static shouldLog(level: string): boolean {
         const levels = ['error', 'warn', 'info', 'debug'];
-        const currentIndex = levels.indexOf(config.logLevel);
+        const currentIndex = levels.indexOf(env.logLevel);
         const messageIndex = levels.indexOf(level);
         return messageIndex <= currentIndex;
     }

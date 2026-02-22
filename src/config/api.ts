@@ -1,9 +1,17 @@
 import axios from 'axios';
-import { config } from './env';
+import { env } from './env';
 
 const client = axios.create({
-    baseURL: config.api,
-    timeout: 5000
+    baseURL: env.api,
+    timeout: 5000,
 });
+
+client.interceptors.request.use((config) => {
+    if (env.apiKey) {
+        config.headers.Authorization = `Bearer ${env.apiKey}`;
+    }
+
+    return config;
+})
 
 export default client;
