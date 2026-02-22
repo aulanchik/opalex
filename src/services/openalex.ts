@@ -1,5 +1,6 @@
 import { OpenAlexResponse, OpenAlexWork, OpenAlexAuthor, OpenAlexInstitution } from '@/types/opalex'
 import { Cache } from '@/utils/cache'
+import { deduplicate } from '@/utils/deduplicate'
 import client from '@/config/api'
 
 const CACHE_TTL = {
@@ -40,7 +41,7 @@ export class OpenAlexService {
         };
 
         try {
-            const response = await client.get(`/works`, { params });
+            const response = await deduplicate(cacheKey, () => client.get(`/works`, { params }));
             Cache.set(cacheKey, response.data, CACHE_TTL.SEARCH);
             return { data: response.data, fromCache: false };
         } catch (error) {
@@ -66,7 +67,7 @@ export class OpenAlexService {
         };
 
         try {
-            const response = await client.get(`/authors`, { params });
+            const response = await deduplicate(cacheKey, () => client.get(`/authors`, { params }));
             Cache.set(cacheKey, response.data, CACHE_TTL.SEARCH);
             return { data: response.data, fromCache: false };
         } catch (error) {
@@ -92,7 +93,7 @@ export class OpenAlexService {
         };
 
         try {
-            const response = await client.get(`/institutions`, { params });
+            const response = await deduplicate(cacheKey, () => client.get(`/institutions`, { params }));
             Cache.set(cacheKey, response.data, CACHE_TTL.SEARCH);
             return { data: response.data, fromCache: false };
         } catch (error) {
@@ -110,7 +111,7 @@ export class OpenAlexService {
         }
 
         try {
-            const response = await client.get(`/works/${id}`);
+            const response = await deduplicate(cacheKey, () => client.get(`/works/${id}`));
             Cache.set(cacheKey, response.data, CACHE_TTL.DETAILS);
             return { data: response.data, fromCache: false };
         } catch (error) {
@@ -128,7 +129,7 @@ export class OpenAlexService {
         }
 
         try {
-            const response = await client.get(`/authors/${id}`);
+            const response = await deduplicate(cacheKey, () => client.get(`/authors/${id}`));
             Cache.set(cacheKey, response.data, CACHE_TTL.DETAILS);
             return { data: response.data, fromCache: false };
         } catch (error) {
@@ -146,7 +147,7 @@ export class OpenAlexService {
         }
 
         try {
-            const response = await client.get(`/institutions/${id}`);
+            const response = await deduplicate(cacheKey, () => client.get(`/institutions/${id}`));
             Cache.set(cacheKey, response.data, CACHE_TTL.DETAILS);
             return { data: response.data, fromCache: false };
         } catch (error) {
