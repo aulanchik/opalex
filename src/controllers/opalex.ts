@@ -14,13 +14,14 @@ export class OpenAlexController {
                 return res.status(400).json({ error: 'Query parameter is required' });
             }
 
-            const results = await OpenAlexService.getWorks(
+            const { data, fromCache } = await OpenAlexService.getWorks(
                 query as string,
                 parseInt(page as string) || 1,
                 parseInt(per_page as string) || 25
             );
 
-            res.json(results);
+            res.set('X-Cache', fromCache ? 'HIT' : 'MISS');
+            res.json(data);
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : String(error);
             res.status(500).json({ error: errorMessage });
@@ -38,13 +39,14 @@ export class OpenAlexController {
                 return res.status(400).json({ error: 'Query parameter is required' });
             }
 
-            const results = await OpenAlexService.getAuthors(
+            const { data, fromCache } = await OpenAlexService.getAuthors(
                 query as string,
                 parseInt(page as string) || 1,
                 parseInt(per_page as string) || 25
             );
 
-            res.json(results);
+            res.set('X-Cache', fromCache ? 'HIT' : 'MISS');
+            res.json(data);
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : String(error);
             res.status(500).json({ error: errorMessage });
@@ -62,13 +64,14 @@ export class OpenAlexController {
                 return res.status(400).json({ error: 'Query parameter is required' });
             }
 
-            const results = await OpenAlexService.getInstitutions(
+            const { data, fromCache } = await OpenAlexService.getInstitutions(
                 query as string,
                 parseInt(page as string) || 1,
                 parseInt(per_page as string) || 25
             );
 
-            res.json(results);
+            res.set('X-Cache', fromCache ? 'HIT' : 'MISS');
+            res.json(data);
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : String(error);
             res.status(500).json({ error: errorMessage });
@@ -86,8 +89,10 @@ export class OpenAlexController {
                 return res.status(400).json({ error: 'ID parameter is required' });
             }
 
-            const result = await OpenAlexService.getWorkById(id);
-            res.json(result);
+            const { data, fromCache } = await OpenAlexService.getWorkById(id);
+
+            res.set('X-Cache', fromCache ? 'HIT' : 'MISS');
+            res.json(data);
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : String(error);
             res.status(500).json({ error: errorMessage });
@@ -105,8 +110,10 @@ export class OpenAlexController {
                 return res.status(400).json({ error: 'ID parameter is required' });
             }
 
-            const result = await OpenAlexService.getAuthorById(id);
-            res.json(result);
+            const { data, fromCache } = await OpenAlexService.getAuthorById(id);
+
+            res.set('X-Cache', fromCache ? 'HIT' : 'MISS');
+            res.json(data);
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : String(error);
             res.status(500).json({ error: errorMessage });
@@ -124,8 +131,10 @@ export class OpenAlexController {
                 return res.status(400).json({ error: 'ID parameter is required' });
             }
 
-            const result = await OpenAlexService.getInstitutionById(id);
-            res.json(result);
+            const { data, fromCache } = await OpenAlexService.getInstitutionById(id);
+
+            res.set('X-Cache', fromCache ? 'HIT' : 'MISS');
+            res.json(data);
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : String(error);
             res.status(500).json({ error: errorMessage });
