@@ -10,6 +10,8 @@ export const env = {
     apiKey: process.env.OPENALEX_API_KEY!,
     logLevel: isProduction ? 'warn' : 'info',
     enableMorgan: !isProduction,
+    rateLimitCapacity: parseInt(process.env.RATE_LIMIT_CAPACITY || '10', 10),
+    rateLimitRefillRate: parseInt(process.env.RATE_LIMIT_REFILL_RATE || '10', 10),
 };
 
 if (!env.apiKey) {
