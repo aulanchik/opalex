@@ -1,7 +1,6 @@
 # OpenAlex Proxy
 
-A small Express + TypeScript service that sits in front of the [OpenAlex API](https://developers.openalex.org/).
-It keeps your API key on the server, validates and whitelists query parameters, caches and de-duplicates requests to save daily budget, retries transient failures, and returns consistent JSON errors.
+A small Express + TypeScript service that sits in front of the [OpenAlex API](https://developers.openalex.org/). It keeps your API key on the server, validates and whitelists query parameters, caches and de-duplicates requests to save daily budget, retries transient failures, and returns consistent JSON errors.
 
 ## Features
 
