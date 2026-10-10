@@ -1,16 +1,22 @@
-import express, { Express } from 'express'
+import express, { Express } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
-
-import sampleRoutes from '@/routes/sampleRoutes';
+import openalex from '@/routes/openalex';
+import { config } from '@/config/env';
+import { errorHandler, notFound } from '@/middleware/errors';
 
 const app: Express = express();
 
+app.disable('x-powered-by');
 app.use(cors());
-app.use(morgan('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-app.use('/', sampleRoutes);
+if (config.enableMorgan) {
+  app.use(morgan('dev'));
+}
+
+app.use('/', openalex);
+
+app.use(notFound);
+app.use(errorHandler);
 
 export default app;
