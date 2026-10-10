@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { ENTITIES } from '@/services/openalex';
+import { ENTITIES, responseCache } from '@/services/openalex';
 import { OpenAlexController } from '@/controllers/openalex';
 import { getInFlightCount } from '@/utils/deduplicate';
 import { rateLimiter } from '@/utils/limiter';
@@ -22,6 +22,10 @@ if (!config.isProduction) {
 
   router.get('/debug/rate-limit', (_req, res) => {
     res.json(rateLimiter.getStatus());
+  });
+
+  router.get('/debug/cache', (_req, res) => {
+    res.json(responseCache.status());
   });
 }
 

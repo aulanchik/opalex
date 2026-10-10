@@ -1,6 +1,28 @@
 import 'dotenv/config';
 
 /**
+ * Reads an environment variable that must be one of `allowed` (case-insensitive).
+ * Returns `fallback` when unset or empty, and throws on any other value so a typo
+ * like CACHE_DRIVER=reddis fails at startup instead of silently using the wrong cache.
+ */
+const oneOf = <T extends string>(name: string, allowed: readonly T[], fallback: T): T => {
+  const rawValue = process.env[name];
+
+  if (rawValue === undefined || rawValue.trim() === '') {
+    return fallback;
+  }
+
+  const value = rawValue.trim().toLowerCase();
+
+  if (!(allowed as readonly string[]).includes(value)) {
+    throw new Error(
+      `Environment variable ${name} must be one of: ${allowed.join(', ')} (got "${rawValue}")`,
+    );
+  }
+  return value as T;
+};
+
+/**
  * Reads an environment variable as an integer.
  * Returns `fallback` when the variable is unset or empty,
  * and throws when it is set to something that isn't an integer.
@@ -72,11 +94,12 @@ const requiredStr = (name: string): string => {
 
 const nodeEnv = str('NODE_ENV', 'development');
 const isProduction = nodeEnv === 'production';
+const cacheDriver = oneOf('CACHE_DRIVER', ['memory', 'redis'] as const, 'memory');
 
 const config = {
   isProduction,
   port: int('PORT', 3000),
-  api: str('OPENALEX_API', 'https://api.openalex.org').replace(/\/+$/, ''),
+  api: str('OPENALEX_API', 'https://api.openalex.org').replace(/\/$/, ''),
   apiKey: requiredStr('OPENALEX_API_KEY'),
 
   logLevel: isProduction ? 'warn' : 'info',
@@ -87,8 +110,14 @@ const config = {
   requestTimeoutMs: int('REQUEST_TIMEOUT_MS', 15000),
   maxRetries: int('MAX_RETRIES', 3),
 
+  cacheDriver,
   cacheTtlSeconds: int('CACHE_TTL_SECONDS', 3600),
   cacheMaxEntries: int('CACHE_MAX_ENTRIES', 500),
+
+  // Only required with CACHE_DRIVER=redis. The URL may contain a password, so it is never logged.
+  redisUrl: cacheDriver === 'redis' ? requiredStr('REDIS_URL') : str('REDIS_URL', ''),
+  redisKeyPrefix: str('REDIS_KEY_PREFIX', 'openalex-proxy:cache:'),
+  redisCommandTimeoutMs: int('REDIS_COMMAND_TIMEOUT_MS', 500),
 } as const;
 
 export { config };

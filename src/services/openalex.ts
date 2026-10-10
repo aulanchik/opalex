@@ -1,7 +1,7 @@
 import { config } from '@/config/env';
+import { createCache } from '@/cache';
 import { rateLimiter } from '@/utils/limiter';
 import { deduplicate } from '@/utils/deduplicate';
-import { TtlCache } from '@/utils/cache';
 import { HttpError } from '@/utils/errors';
 import { Logger } from '@/utils/logger';
 
@@ -29,12 +29,13 @@ export interface ServiceResult {
   rateLimit?: RateLimitInfo;
 }
 
-interface CacheValue {
+export interface CacheValue {
   data: unknown;
   rateLimit?: RateLimitInfo;
 }
 
-const cache = new TtlCache<CacheValue>(config.cacheMaxEntries, config.cacheTtlSeconds * 1000);
+/** In-memory or Redis, chosen by CACHE_DRIVER. Call `responseCache.close()` on shutdown. */
+export const responseCache = createCache<CacheValue>(config);
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -168,14 +169,15 @@ const cacheKey = (path: string, params: Record<string, string>): string => {
 const request = async (path: string, params: Record<string, string>): Promise<ServiceResult> => {
   const key = cacheKey(path, params);
 
-  const cached = cache.get(key);
+  const cached = await responseCache.get(key);
   if (cached) {
     return { ...cached, fromCache: true };
   }
 
   const fresh = await deduplicate(key, async () => {
     const value = await fetchOpenAlex(path, params);
-    cache.set(key, value);
+    // Not awaited: the caller shouldn't wait on the cache write, and set() never rejects.
+    void responseCache.set(key, value);
     return value;
   });
 
